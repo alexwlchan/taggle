@@ -8,13 +8,19 @@ app = Flask(__name__)
 
 client = Elasticsearch(hosts=['http://localhost:9200'])
 
-from taggle.elastic import create_index
+from taggle.elastic import index_documents
+from taggle.models import TaggedDocument
 
 
 @app.route('/')
 def index():
-    create_index(client=client, name='taggle-test-index')
-    return 'Hello world!'
+    documents = [
+        TaggedDocument(id=1, tags=['a', 'b'], foo='bar'),
+        TaggedDocument(id=2, tags=['b', 'c'], bar='baz'),
+        TaggedDocument(id=3, tags=['c', 'd'], baz='foo'),
+    ]
+
+    return index_documents(client=client, name='taggle', documents=documents)
 
 
 if __name__ == '__main__':
