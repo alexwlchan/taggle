@@ -1,5 +1,7 @@
 attrs
 elasticsearch
 flask
+flask_login
+flask_wtf
 markdown
 maya
