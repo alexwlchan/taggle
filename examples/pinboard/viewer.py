@@ -8,6 +8,7 @@ import sys
 from elasticsearch import Elasticsearch
 from flask import render_template, Flask
 from flask_login import login_required
+from flask_scss import Scss
 import maya
 
 sys.path.append(subprocess.check_output(
@@ -23,6 +24,9 @@ from tagsort import custom_tag_sort
 
 
 app = Flask(__name__)
+
+scss = Scss(app)
+scss.update_scss()
 
 configure_login(app, password='password')
 
