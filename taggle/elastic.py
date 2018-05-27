@@ -47,6 +47,10 @@ def create_index(client, name):
                 'mappings': {
                     name: {
                         'properties': {
+                            'date_added': {
+                                'type': 'date',
+                                'format': 'basic_date_time_no_millis',
+                            },
                             'tags': {
                                 'type': 'text',
                                 'fields': {

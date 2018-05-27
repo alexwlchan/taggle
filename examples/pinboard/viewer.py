@@ -16,10 +16,10 @@ sys.path.append(subprocess.check_output(
 
 from taggle.elastic import add_tag_to_query, index_documents, search_documents
 from taggle.login import configure_login
-from taggle.models import TaggedDocument
 from taggle.tagcloud import build_tag_cloud, TagcloudOptions
 
 from filters import description_markdown, title_markdown
+from pinboard import PinboardManager
 from tagsort import custom_tag_sort
 
 
@@ -54,18 +54,22 @@ app.jinja_env.filters['display_query'] = lambda q: q.replace('"', '&quot;')
 client = Elasticsearch(hosts=['http://localhost:9200'])
 
 
-@app.route('/')
-@login_required
-def index():
-    documents = [
-        TaggedDocument(id=1, tags=['ab', 'ba'], foo='bar'),
-        TaggedDocument(id=2, tags=['ba', 'cd'], bar='baz'),
-        TaggedDocument(id=3, tags=['cd', 'de'], baz='foo'),
-    ]
+manager = PinboardManager(
+    username=open('username.txt').read().strip(),
+    password=open('password.txt').read().strip(),
+)
 
-    print(documents)
-    index_name = index_documents(client=client, name='taggle', documents=documents)
-    print(index_name)
+
+@app.route('/')
+# @login_required
+def index():
+    manager.get_bookmark_metadata()
+
+    index_name = index_documents(
+        client=client,
+        name='taggle',
+        documents=list(manager.get_data_for_indexing())
+    )
 
     import time
     time.sleep(1)
