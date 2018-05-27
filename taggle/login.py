@@ -1,6 +1,7 @@
 # -*- encoding: utf-8
 
 import datetime as dt
+import secrets
 
 import attr
 from flask import abort, redirect, render_template
@@ -11,6 +12,8 @@ from wtforms.validators import DataRequired
 
 
 def configure_login(app, password):
+    app.config['SECRET_KEY'] = secrets.token_bytes()
+
     login_manager = LoginManager()
     login_manager.init_app(app)
 

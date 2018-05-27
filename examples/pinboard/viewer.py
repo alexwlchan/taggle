@@ -7,12 +7,14 @@ import sys
 
 from elasticsearch import Elasticsearch
 from flask import render_template, Flask
+from flask_login import login_required
 import maya
 
 sys.path.append(subprocess.check_output(
     ['git', 'rev-parse', '--show-toplevel']).strip().decode('utf8'))
 
 from taggle.elastic import add_tag_to_query, index_documents, search_documents
+from taggle.login import configure_login
 from taggle.models import TaggedDocument
 from taggle.tagcloud import build_tag_cloud, TagcloudOptions
 
@@ -21,6 +23,8 @@ from tagsort import custom_tag_sort
 
 
 app = Flask(__name__)
+
+configure_login(app, password='password')
 
 
 app.jinja_env.filters['add_tag_to_query'] = add_tag_to_query
@@ -47,6 +51,7 @@ client = Elasticsearch(hosts=['http://localhost:9200'])
 
 
 @app.route('/')
+@login_required
 def index():
     documents = [
         TaggedDocument(id=1, tags=['ab', 'ba'], foo='bar'),
@@ -69,6 +74,18 @@ def index():
             query_string='tags:ba'
         )
     )
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    message = (
+        'The requested URL was not found on the server. If you entered the '
+        'URL manually please check your spelling and try again.'
+    )
+    return render_template(
+        'error.html',
+        title='404 Not Found',
+        message=message), 404
 
 
 if __name__ == '__main__':
