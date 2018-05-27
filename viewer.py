@@ -20,14 +20,14 @@ def index():
         TaggedDocument(id=3, tags=['cd', 'de'], baz='foo'),
     ]
 
+    print(documents)
     index_name = index_documents(client=client, name='taggle', documents=documents)
     print(index_name)
 
     import time
     time.sleep(1)
 
-    import json
-    return json.dumps(search_documents(client=client, index_name=index_name, query_string='tags:ba'))
+    return str(search_documents(client=client, index_name=index_name, query_string='tags:ba'))
 
 
 if __name__ == '__main__':

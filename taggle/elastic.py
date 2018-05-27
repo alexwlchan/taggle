@@ -6,6 +6,8 @@ import time
 from elasticsearch.exceptions import RequestError as ElasticsearchRequestError
 from elasticsearch.helpers import bulk as bulk_helper
 
+from taggle.models import ResultList, TaggedDocument
+
 
 def create_index(client, name):
     """Creates an index with the appropriate mapping for the tags field."""
@@ -62,6 +64,11 @@ def index_documents(client, name, documents):
     return index_name
 
 
+def _join_dicts(x, y):
+    x.update(y)
+    return x
+
+
 def search_documents(client, index_name, query_string, page=1, page_size=96):
     body = _build_query(
         query_string=query_string,
@@ -69,7 +76,27 @@ def search_documents(client, index_name, query_string, page=1, page_size=96):
         page_size=page_size
     )
 
-    return client.search(index=index_name, body=body)
+    resp = client.search(index=index_name, body=body)
+
+    total_size = resp['hits']['total']
+    documents = [
+        TaggedDocument(**_join_dicts(doc['_source'], {'id': doc['_id']}))
+        for doc in resp['hits']['hits']
+    ]
+
+    aggregations = resp['aggregations']
+    tags = {
+        bucket['key']: bucket['doc_count']
+        for bucket in aggregations['tags']['buckets']
+    }
+
+    return ResultList(
+        total_size=total_size,
+        documents=documents,
+        page=page,
+        page_size=page_size,
+        tags=tags
+    )
 
 
 def _build_query(query_string, page, page_size):

@@ -21,3 +21,30 @@ class TaggedDocument:
         self.date_added = date_added or dt.datetime.now()
         self.metadata = metadata
         super().__init__()
+
+
+@attr.s
+class ResultList:
+    """Represents a set of results from Elasticsearch.
+
+    This stores some information about the results from the query, and
+    some convenience methods about records on the query.
+
+    """
+    total_size = attr.ib()
+    page = attr.ib()
+    page_size = attr.ib()
+    documents = attr.ib()
+    tags = attr.ib()
+
+    @property
+    def start_idx(self):
+        return 1 + self.page_size * (self.page - 1)
+
+    @property
+    def end_idx(self):
+        return min(self.total_size, self.page_size * self.page)
+
+    @property
+    def total_pages(self):
+        return math.ceil(self.total_size / self.page_size)
