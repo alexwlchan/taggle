@@ -1,0 +1,8 @@
+<p id="tag__cloud">
+  {% set tag_cloud = tags|build_tag_cloud %}
+  {% for t in tag_cloud|custom_tag_sort %}
+    <a
+      href="/?query={{ query|add_tag_to_query(t) }}"
+      style="font-size: {{ tag_cloud[t].size }}pt; color: {{ tag_cloud[t].colr }};">{{ t|safe }}</a>
+  {% endfor %}
+</p>

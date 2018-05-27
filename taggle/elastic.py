@@ -1,29 +1,14 @@
 # -*- encoding: utf-8
 
-import datetime as dt
 import math
 import shlex
 import time
 
 import attr
-
 from elasticsearch.exceptions import RequestError as ElasticsearchRequestError
 from elasticsearch.helpers import bulk as bulk_helper
 
-
-@attr.s(init=False)
-class TaggedDocument:
-    id = attr.ib()
-    tags = attr.ib()
-    date_added = attr.ib()
-    metadata = attr.ib()
-
-    def __init__(self, id, tags, date_added=None, **metadata):
-        self.id = id
-        self.tags = tags
-        self.date_added = date_added or dt.datetime.now()
-        self.metadata = metadata
-        super().__init__()
+from taggle.models import TaggedDocument
 
 
 @attr.s
@@ -215,3 +200,22 @@ def _build_query(query_string, page, page_size):
     }
 
     return query
+
+
+def add_tag_to_query(query_string, new_tag):
+    """Given a query in Elasticsearch's query string syntax, add another tag
+    to further filter the query.
+
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
+
+    """
+    tag_marker = f'tags:{new_tag}'
+
+    # Look for the tag in the existing query; remember if might be at the end!
+    if (
+        (tag_marker + ' ') in query_string or
+        query_string.endswith(tag_marker)
+    ):
+        return query_string
+
+    return ' '.join([query_string, tag_marker]).strip()

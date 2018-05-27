@@ -6,10 +6,22 @@
 #
 attrs==18.1.0
 click==6.7                # via flask
+dateparser==0.7.0         # via maya
 elasticsearch==6.2.0
 flask==1.0.2
+humanize==0.5.1           # via maya
 itsdangerous==0.24        # via flask
 jinja2==2.10              # via flask
+markdown==2.6.11
 markupsafe==1.0           # via jinja2
+maya==0.5.0
+pendulum==1.5.1           # via maya
+python-dateutil==2.7.3    # via dateparser, pendulum, snaptime
+pytz==2018.4              # via dateparser, maya, snaptime, tzlocal
+pytzdata==2018.5          # via pendulum
+regex==2018.2.21          # via dateparser
+six==1.11.0               # via python-dateutil
+snaptime==0.2.4           # via maya
+tzlocal==1.5.1            # via dateparser, maya, pendulum
 urllib3==1.22             # via elasticsearch
 werkzeug==0.14.1          # via flask
