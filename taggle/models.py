@@ -18,3 +18,9 @@ class TaggedDocument:
         self.date_added = date_added or dt.datetime.now()
         self.metadata = metadata
         super().__init__()
+
+    def __getattr__(self, name):
+        try:
+            return self.metadata[name]
+        except KeyError:
+            raise AttributeError(name)

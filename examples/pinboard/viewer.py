@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 from elasticsearch import Elasticsearch
-from flask import render_template, Flask
+from flask import render_template, request, Flask
 from flask_login import login_required
 from flask_scss import Scss
 import maya
@@ -74,13 +74,18 @@ def index():
     import time
     time.sleep(1)
 
+    query_string = request.args.get('query', '')
+
+    results = search_documents(
+        client=client,
+        index_name=index_name,
+        query_string=query_string
+    )
+
     return render_template(
         'index.html',
-        results=search_documents(
-            client=client,
-            index_name=index_name,
-            query_string='tags:ba'
-        )
+        results=results,
+        query_string=query_string
     )
 
 

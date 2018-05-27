@@ -1,5 +1,7 @@
 # -*- encoding: utf-8
 
+import re
+
 import markdown
 from markdown.extensions import Extension
 from markdown.extensions.smarty import SmartyExtension

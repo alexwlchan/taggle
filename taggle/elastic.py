@@ -11,6 +11,9 @@ from elasticsearch.helpers import bulk as bulk_helper
 from taggle.models import TaggedDocument
 
 
+DATE_FORMAT = '%Y%m%dT%H%M%SZ'
+
+
 @attr.s
 class ResultList:
     """Represents a set of results from Elasticsearch.

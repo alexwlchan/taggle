@@ -1,0 +1,129 @@
+.bookmark {
+
+  a, .bookmark__title a {
+    color: $primary-color;
+
+    &:visited {
+      color: $primary-dark;
+    }
+  }
+
+  .bookmark__title {
+    margin-bottom: 0.25em;
+
+    .bookmark__backup {
+      text-decoration: none;
+      &, &:visited {
+        color: $accent-grey;
+      }
+      &:hover {
+        color: darken($accent-grey, 15%);
+      }
+    }
+  }
+
+  .bookmark__metadata {
+    margin-top: 0.25em;
+    font-size: 0.8em;
+    color: $accent-grey;
+    a {
+      text-decoration: none;
+      color: $accent-grey;
+      &:hover {
+        text-decoration: underline;
+      }
+      margin-right: 0.5em;
+    }
+
+    .bookmark__tag {
+      &, &:visited {
+        color: darken(#f26623, 15%);
+      }
+    }
+  }
+
+  .bookmark__description {
+    font-size: 0.95em;
+    blockquote {
+      margin-left: 1.5em;
+      color: darken($primary-dark, 15%);
+    }
+
+    p:first-child {
+      margin-top: 0.25em;
+    }
+
+    p:last-child {
+      margin-bottom: 0.25em;
+    }
+  }
+
+  margin-bottom: 2em;
+
+  &.bookmark__unread {
+    .bookmark__title {
+      a {
+        color: #f26623 !important;
+
+        &:visited {
+          color: darken(#f26623, 15%) !important;
+        }
+      }
+      margin-bottom: 0.25em;
+    }
+  }
+
+  &.bookmark__starred {
+    .bookmark__title {
+
+      // I'm using this instead of margin-left: so that only the first line
+      // is reverse-indented, and line wrapping works correctly.
+      text-indent: -23px;
+
+      &::before {
+        content: "🌟";
+        font-size: 0.75em;
+        margin-right: 2px;
+
+        // This just stops it disrupting subsequent lines
+        line-height: 0.1em;
+      }
+    }
+  }
+}
+
+.content__bookmarks {
+  width: calc(70% - 25px);
+  float: left;
+}
+
+.tag_cloud {
+  width: calc(30% - 25px);
+  margin-left: 50px;
+  padding-top: 60px;
+  float: right;
+  padding-bottom: 30px;
+}
+
+@media screen and (max-width: 600px) {
+  .content__bookmarks, .tag_cloud {
+    width: 100%;
+  }
+  .tag_cloud {
+    padding-top: 0px;
+  }
+
+  .content {
+    padding: 1px 20px !important;
+  }
+
+  .bookmark.bookmark__starred {
+    .bookmark__title {
+      text-indent: -18.5px;
+      &::before {
+        margin-right: 0;
+        font-size: 0.65em;
+      }
+    }
+  }
+}

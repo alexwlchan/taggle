@@ -1,0 +1,25 @@
+.pagination {
+  clear: both;
+  font-size: 0.9em;
+  height: 60px;
+
+  &, a, a:visited {
+    color: $accent-grey;
+  }
+
+  .pagination__left {
+    float: left;
+    width: 50%;
+  }
+  .pagination__right {
+    float: right;
+    width: 50%;
+    text-align: right;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .pagination__left, .pagination__right {
+    width: 100%;
+  }
+}

@@ -1,5 +1,33 @@
+$primary-color: #30499B;
+$primary-dark: darken($primary-color, 20%);
+$accent-grey: #999;
+
+$max-width: 1200px;
+$default-padding: 30px;
+
+body {
+  font: 11pt Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.3em;
+}
+
+h3 {
+  margin-bottom: 0.1em;
+}
+
+@import "_mixins.scss";
+
+@import "_aside.scss";
+@import "_bookmark.scss";
+@import "_footer.scss";
+@import "_pagination.scss";
+@import "_tag_cloud.scss";
+
+a:hover {
+  text-decoration: none;
+}
+
 .content {
-  max-width: 800px;
-  margin-left:  auto;
-  margin-right: auto;
+  @include central_element();
 }

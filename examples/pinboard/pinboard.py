@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import maya
 import requests
 
+from taggle.elastic import DATE_FORMAT
 from taggle.models import TaggedDocument
 
 
@@ -166,7 +167,7 @@ class PinboardManager:
             yield TaggedDocument(
                 id=id,
                 tags=bookmark['tags'],
-                date_added=maya.parse(bookmark['created']).datetime().strftime('%Y%m%dT%H%M%SZ'),
+                date_added=maya.parse(bookmark['created']).datetime().strftime(DATE_FORMAT),
                 title=bookmark['title'],
                 description=bookmark['description'],
                 is_starred=is_starred,
