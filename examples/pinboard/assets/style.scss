@@ -1,12 +1,14 @@
-$primary-color: #30499B;
-$primary-dark: darken($primary-color, 20%);
+$primary-color: #1727b5;
+$primary-dark: darken($primary-color, 15%);
 $accent-grey: #999;
+
+$tag-color: #ca3b0c;
 
 $max-width: 1200px;
 $default-padding: 30px;
 
 body {
-  font: 11pt Helvetica, Arial, sans-serif;
+  font: 11pt 'Avenir Next', Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
   line-height: 1.3em;

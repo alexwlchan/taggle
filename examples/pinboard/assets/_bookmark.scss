@@ -10,6 +10,7 @@
 
   .bookmark__title {
     margin-bottom: 0.25em;
+    font-weight: 500;
 
     .bookmark__backup {
       text-decoration: none;
@@ -37,24 +38,39 @@
 
     .bookmark__tag {
       &, &:visited {
-        color: darken(#f26623, 15%);
+        color: $tag-color;
       }
     }
   }
 
   .bookmark__description {
     font-size: 0.95em;
+
+    $sidebar-border-width: 3px;
+    $midtone-gray: #ccc;
+
     blockquote {
-      margin-left: 1.5em;
-      color: darken($primary-dark, 15%);
-    }
+      border-left: $sidebar-border-width solid $midtone-gray;
+      margin-left:  -15px;
+      margin-right: 0px;
+      padding: 0px 12px;
 
-    p:first-child {
-      margin-top: 0.25em;
-    }
+      & > p {
+        font-style: italic;
+        color: #6f6f6f;
+      }
 
-    p:last-child {
-      margin-bottom: 0.25em;
+      pre {
+        border-color: #aaa;
+      }
+
+      em {
+        font-style: normal;
+      }
+
+      @media screen and (max-width: 600px) {
+        margin-left: 0px;
+      }
     }
   }
 

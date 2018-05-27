@@ -6,9 +6,10 @@ import subprocess
 import sys
 
 from elasticsearch import Elasticsearch
-from flask import render_template, request, Flask
+from flask import render_template, request, url_for, Flask
 from flask_login import login_required
 from flask_scss import Scss
+from jinja2 import StrictUndefined
 import maya
 
 sys.path.append(subprocess.check_output(
@@ -24,6 +25,7 @@ from tagsort import custom_tag_sort
 
 
 app = Flask(__name__)
+app.jinja_env.undefined = StrictUndefined
 
 scss = Scss(app)
 scss.update_scss()
@@ -31,14 +33,34 @@ scss.update_scss()
 configure_login(app, password='password')
 
 
+def _build_pagination_url(desired_page):
+    if desired_page < 1:
+        return None
+    args = request.args.copy()
+    args['page'] = desired_page
+    return url_for(request.endpoint, **args)
+
+
+def next_page_url(request):
+    page = int(request.args.get('page', '1'))
+    return _build_pagination_url(page + 1)
+
+
+def prev_page_url(request):
+    page = int(request.args.get('page', '1'))
+    return _build_pagination_url(page - 1)
+
+
 app.jinja_env.filters['add_tag_to_query'] = add_tag_to_query
 app.jinja_env.filters['custom_tag_sort'] = custom_tag_sort
 app.jinja_env.filters['description_markdown'] = description_markdown
+app.jinja_env.filters['next_page_url'] = next_page_url
+app.jinja_env.filters['prev_page_url'] = prev_page_url
 app.jinja_env.filters['slang_time'] = lambda d: maya.parse(d).slang_time()
 app.jinja_env.filters['title_markdown'] = title_markdown
 
 options = TagcloudOptions(
-    size_start=9, size_end=24, colr_start='#999999', colr_end='#bd450b'
+    size_start=9, size_end=24, colr_start='#999999', colr_end='#ca3b0c'
 )
 
 app.jinja_env.filters['build_tag_cloud'] = lambda t: build_tag_cloud(
@@ -79,7 +101,8 @@ def index():
     results = search_documents(
         client=client,
         index_name=index_name,
-        query_string=query_string
+        query_string=query_string,
+        page=int(request.args.get('page', '1'))
     )
 
     return render_template(

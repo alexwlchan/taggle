@@ -3,7 +3,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{% if title %}{{ title }} &ndash; {% endif %}pincushion</title>
+  <title>{% if title is defined %}{{ title }} &ndash; {% endif %}pinboard</title>
 
   <link rel="stylesheet" href="/static/style.css">
   <link rel="apple-touch-icon" type="image/png" href="/static/apple-touch-icon.png">

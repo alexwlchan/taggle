@@ -1,9 +1,9 @@
-<div class="bookmark{% if b.toread %} bookmark__unread{% endif %}{% if b.starred %} bookmark__starred{% endif %}">
+<div class="bookmark{% if b.toread %} bookmark__unread{% endif %}{% if b.is_starred %} bookmark__starred{% endif %}">
 
   <p class="bookmark__title">
     <a href="{{ b.url }}">{{ b.title|title_markdown|safe }}</a>
-    {% if b._backup %}
-    <a class="bookmark__backup" href="https://s3-eu-west-1.amazonaws.com/alexwlchan-pincushion/{{ b.id }}/index.html">&#x2611;&#xFE0E;</a>
+    {% if b.archive_id %}
+    <a class="bookmark__backup" href="https://pinboard.in/cached/{{ b.archive_id }}/">&#x2611;&#xFE0E;</a>
     {% endif %}
   </p>
 
@@ -14,7 +14,7 @@
   {% endif %}
 
   <p class="bookmark__metadata">
-    saved <a href="https://pinboard.in/u:alexwlchan/b:{{ b.slug }}">{{ b.date_added|slang_time }}</a>
+    saved <a href="https://pinboard.in/u:alexwlchan/b:{{ b.id }}">{{ b.date_added|slang_time }}</a>
     {% for tag in b.tags|sort %}
       <a href="/?query={{ ""|add_tag_to_query(tag) }}" class="bookmark__tag">{{ tag|safe }}</a>
     {% endfor %}

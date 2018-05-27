@@ -6,7 +6,7 @@
   <h3>{{ notitle|safe }}.</h3>
   <p></p>
   {% else %}
-  {% if title %}<h3>{{ title|safe }}.</h3>{% endif %}
+  {% if query_string != "" %}<h3>Search results for &ldquo;{{ query_string }}&rdquo;</h3>{% endif %}
 
   <div class="row">
     <div class="content__bookmarks">

@@ -169,8 +169,10 @@ class PinboardManager:
                 tags=bookmark['tags'],
                 date_added=maya.parse(bookmark['created']).datetime().strftime(DATE_FORMAT),
                 title=bookmark['title'],
+                url=bookmark['url'],
                 description=bookmark['description'],
                 is_starred=is_starred,
                 archive_id=archive_id,
-                full_text=full_text
+                full_text=full_text,
+                toread=(bookmark['toread'] != '0'),
             )
