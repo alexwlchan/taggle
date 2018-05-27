@@ -4,13 +4,16 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+apscheduler==3.5.1        # via flask-apscheduler
 attrs==18.1.0
 beautifulsoup4==4.6.0
 certifi==2018.4.16        # via requests
-chardet==3.0.4            # via requests
+chardet==3.0.4            # via readability-lxml, requests
 click==6.7                # via flask
+cssselect==1.0.3          # via readability-lxml
 dateparser==0.7.0         # via maya
 elasticsearch==6.2.0
+flask-apscheduler==1.8.0
 flask-login==0.4.1
 flask-scss==0.5
 flask-wtf==0.14.2
@@ -19,19 +22,21 @@ humanize==0.5.1           # via maya
 idna==2.6                 # via requests
 itsdangerous==0.24        # via flask
 jinja2==2.10              # via flask
+lxml==4.2.1               # via readability-lxml
 markdown==2.6.11
 markupsafe==1.0           # via jinja2
 maya==0.5.0
 pendulum==1.5.1           # via maya
 pyscss==1.3.5             # via flask-scss
-python-dateutil==2.7.3    # via dateparser, pendulum, snaptime
-pytz==2018.4              # via dateparser, maya, snaptime, tzlocal
+python-dateutil==2.7.3    # via dateparser, flask-apscheduler, pendulum, snaptime
+pytz==2018.4              # via apscheduler, dateparser, maya, snaptime, tzlocal
 pytzdata==2018.5          # via pendulum
+readability-lxml==0.7
 regex==2018.2.21          # via dateparser
 requests==2.18.4
-six==1.11.0               # via pyscss, python-dateutil
+six==1.11.0               # via apscheduler, pyscss, python-dateutil
 snaptime==0.2.4           # via maya
-tzlocal==1.5.1            # via dateparser, maya, pendulum
+tzlocal==1.5.1            # via apscheduler, dateparser, maya, pendulum
 urllib3==1.22             # via elasticsearch, requests
 werkzeug==0.14.1          # via flask
 wtforms==2.1              # via flask-wtf

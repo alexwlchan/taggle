@@ -8,7 +8,9 @@ import tempfile
 
 from bs4 import BeautifulSoup
 import maya
+import readability
 import requests
+from requests.exceptions import RequestException
 
 from taggle.elastic import DATE_FORMAT
 from taggle.models import TaggedDocument
@@ -21,7 +23,8 @@ class PinboardManager:
         self.password = password
         self.last_fetched = None
 
-        self.cache_dir = tempfile.mkdtemp()
+        # self.cache_dir = tempfile.mkdtemp()
+        self.cache_dir = '/tmp/pinboard'
 
     def __repr__(self):
         return '<%s username=%r>' % (type(self).__name__, self.username)
@@ -58,8 +61,7 @@ class PinboardManager:
             print("We're already up-to-date!")
             return json.load(open(self.cache_path('enriched_metadata.json')))
 
-    def _get_enriched_data(self):
-        # Page through my Pinboard account, and attach the Pinboard IDs.
+    def _login_pinboard_sess(self):
         sess = requests.Session()
         sess.hooks['response'].append(
             lambda r, *args, **kwargs: r.raise_for_status()
@@ -72,6 +74,13 @@ class PinboardManager:
             data={'username': self.username, 'password': self.password},
             allow_redirects=False
         )
+        assert resp.headers['Location'] != '?error=bad+login'
+
+        return sess
+
+    def _get_enriched_data(self):
+        # Page through my Pinboard account, and attach the Pinboard IDs.
+        sess = self._login_pinboard_sess()
 
         pinboard_metadata = []
         starred = []
@@ -143,6 +152,51 @@ class PinboardManager:
 
         return enriched_metadata
 
+    def download_assets(self):
+        txt_dir = os.path.join(self.cache_dir, 'txt')
+        os.makedirs(txt_dir, exist_ok=True)
+        try:
+            data = json.load(open(self.cache_path('enriched_metadata.json')))
+        except FileNotFoundError:
+            return
+
+        print('Downloading archive...')
+        sess = self._login_pinboard_sess()
+
+        for bookmark in data['metadata']:
+            try:
+                archive_id = data['archive_links'][bookmark['id']]
+            except KeyError:
+                continue
+
+            local_archive_id = archive_id.replace('/cached', '').replace('/', '')
+
+            out_path = os.path.join(txt_dir, f'{local_archive_id}.txt')
+            if os.path.exists(out_path):
+                continue
+
+            print(f'Downloading archive for {bookmark["id"]}...')
+            resp = sess.get(f'https://pinboard.in/{archive_id}')
+            archive_soup = BeautifulSoup(resp.text, 'html.parser')
+            frames = archive_soup.findAll('iframe')
+            if len(frames) != 2:
+                print(frames)
+                continue
+
+            try:
+                resp = sess.get(
+                    frames[1].attrs['src'],
+                    headers={
+                        'Referer': f'https://pinboard.in/{archive_id}'
+                    }
+                )
+            except RequestException as exc:
+                print(exc)
+                continue
+            doc = readability.Document(resp.text)
+            with open(out_path, 'w') as f:
+                f.write(doc.summary())
+
     def get_data_for_indexing(self):
         try:
             data = json.load(open(self.cache_path('enriched_metadata.json')))
@@ -158,7 +212,7 @@ class PinboardManager:
 
                 try:
                     full_text = open(
-                        self.cache_path('txt/{archive_id}.txt')).read()
+                        self.cache_path(f'txt/{archive_id}.txt')).read()
                 except FileNotFoundError:
                     full_text = None
             else:

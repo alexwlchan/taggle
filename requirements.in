@@ -2,9 +2,11 @@ attrs
 beautifulsoup4
 elasticsearch
 flask
+Flask-APScheduler
 flask_login
 flask_scss
 flask_wtf
 markdown
 maya
+readability-lxml
 requests

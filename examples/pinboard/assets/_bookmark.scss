@@ -18,7 +18,7 @@
         color: $accent-grey;
       }
       &:hover {
-        color: darken($accent-grey, 15%);
+        color: darken($accent-grey, 20%);
       }
     }
   }
@@ -53,6 +53,7 @@
       border-left: $sidebar-border-width solid $midtone-gray;
       margin-left:  -15px;
       margin-right: 0px;
+      margin-bottom: 10px;
       padding: 0px 12px;
 
       & > p {
@@ -71,6 +72,18 @@
       @media screen and (max-width: 600px) {
         margin-left: 0px;
       }
+
+      p:first-child {
+        margin-top: 0;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    p:last-child {
+      margin-bottom: 8px;
     }
   }
 

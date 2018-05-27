@@ -72,10 +72,8 @@ def create_index(client, name):
             raise
 
 
-def index_documents(client, name, documents):
+def index_documents(client, index_name, documents):
     """Index a series of documents into an Elasticsearch index."""
-    index_name = f'{name}-{time.time()}'
-
     create_index(client=client, name=index_name)
 
     def _actions():
@@ -97,7 +95,24 @@ def index_documents(client, name, documents):
         if not actions:
             break
 
-    return index_name
+    print('Cleaning up deleted bookmarks...')
+    indexed = client.search(index=index_name, _source=False, size=10000)
+    hits = indexed['hits']['hits']
+    indexed_ids = [h['_id'] for h in hits]
+
+    delete_actions = []
+    document_ids = [doc.id for doc in documents]
+    for i in indexed_ids:
+        if i not in document_ids:
+            delete_actions.append({
+                '_op_type': 'delete',
+                '_index': index_name,
+                '_type': index_name,
+                '_id': i,
+            })
+
+    if delete_actions:
+        resp = bulk_helper(client=client, actions=delete_actions)
 
 
 def _join_dicts(x, y):
@@ -105,12 +120,20 @@ def _join_dicts(x, y):
     return x
 
 
-def search_documents(client, index_name, query_string, page=1, page_size=96):
+def search_documents(client,
+                     index_name,
+                     query_string,
+                     query_params=None,
+                     page=1,
+                     page_size=96):
     body = _build_query(
         query_string=query_string,
         page=page,
         page_size=page_size
     )
+
+    if query_params is not None:
+        body.update(query_params)
 
     resp = client.search(index=index_name, body=body)
 

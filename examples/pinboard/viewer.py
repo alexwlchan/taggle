@@ -7,6 +7,7 @@ import sys
 
 from elasticsearch import Elasticsearch
 from flask import render_template, request, url_for, Flask
+from flask_apscheduler import APScheduler
 from flask_login import login_required
 from flask_scss import Scss
 from jinja2 import StrictUndefined
@@ -25,12 +26,6 @@ from tagsort import custom_tag_sort
 
 
 app = Flask(__name__)
-app.jinja_env.undefined = StrictUndefined
-
-scss = Scss(app)
-scss.update_scss()
-
-configure_login(app, password='password')
 
 
 def _build_pagination_url(desired_page):
@@ -82,27 +77,31 @@ manager = PinboardManager(
 )
 
 
-@app.route('/')
-# @login_required
-def index():
+def update_index():
     manager.get_bookmark_metadata()
 
-    index_name = index_documents(
+    index_documents(
         client=client,
-        name='taggle',
+        index_name='pinboard',
         documents=list(manager.get_data_for_indexing())
     )
 
-    import time
-    time.sleep(1)
 
+@app.route('/')
+# @login_required
+def index():
     query_string = request.args.get('query', '')
 
     results = search_documents(
         client=client,
-        index_name=index_name,
+        index_name='pinboard',
         query_string=query_string,
-        page=int(request.args.get('page', '1'))
+        page=int(request.args.get('page', '1')),
+        query_params={
+            '_source': {
+                'excludes': ['full_text']
+            }
+        }
     )
 
     return render_template(
@@ -124,5 +123,36 @@ def page_not_found(error):
         message=message), 404
 
 
+class Config(object):
+    index_name = None
+
+    JOBS = [
+        {
+            'id': 'update_index',
+            'func': update_index,
+            'trigger': 'interval',
+            'seconds': 30
+        },
+        {
+            'id': 'download_assets',
+            'func': manager.download_assets,
+            'trigger': 'interval',
+            'seconds': 600
+        }
+    ]
+
+
 if __name__ == '__main__':
+    app.config.from_object(Config())
+    app.jinja_env.undefined = StrictUndefined
+
+    scss = Scss(app)
+    scss.update_scss()
+
+    scheduler = APScheduler()
+    scheduler.init_app(app)
+    scheduler.start()
+
+    configure_login(app, password='password')
+
     app.run(debug=True)
