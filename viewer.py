@@ -8,8 +8,7 @@ app = Flask(__name__)
 
 client = Elasticsearch(hosts=['http://localhost:9200'])
 
-from taggle.elastic import index_documents, search_documents
-from taggle.models import TaggedDocument
+from taggle import index_documents, search_documents, TaggedDocument
 
 
 @app.route('/')
