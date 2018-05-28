@@ -1,9 +1,9 @@
-<div class="bookmark{% if b.toread %} bookmark__unread{% endif %}{% if b.is_starred %} bookmark__starred{% endif %}">
+<div class="bookmark{% if b.toread %} bookmark__unread{% endif %}{% if b.starred %} bookmark__starred{% endif %}">
 
   <p class="bookmark__title">
     <a href="{{ b.url }}">{{ b.title|title_markdown|safe }}</a>
-    {% if b.archive_id %}
-    <a class="bookmark__backup" href="https://pinboard.in/cached/{{ b.archive_id }}/">&#x2611;&#xFE0E;</a>
+    {%- if b.archive_id -%}
+    &nbsp;<a class="bookmark__backup" href="https://pinboard.in/cached/{{ b.archive_id }}/">&#x2611;&#xFE0E;</a>
     {% endif %}
   </p>
 

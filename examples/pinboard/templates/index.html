@@ -3,8 +3,7 @@
 {% block content %}
 <div class="content">
   {% if results.total_size == 0 %}
-  <h3>{{ notitle|safe }}.</h3>
-  <p></p>
+  <h3>There were no results for &ldquo;{{ query_string }}&rdquo;!</h3>
   {% else %}
   {% if query_string != "" %}<h3>Search results for &ldquo;{{ query_string }}&rdquo;</h3>{% endif %}
 

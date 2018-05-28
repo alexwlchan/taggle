@@ -16,6 +16,15 @@ from taggle.elastic import DATE_FORMAT
 from taggle.models import TaggedDocument
 
 
+def updates_cache(fn):
+    def wrapper(self, *args, **kwargs):
+        res = fn(self, *args, **kwargs)
+        open(self.cache_path('write_marker'), 'wb').write(b'')
+        return res
+
+    return wrapper
+
+
 class PinboardManager:
 
     def __init__(self, username, password):
@@ -23,8 +32,7 @@ class PinboardManager:
         self.password = password
         self.last_fetched = None
 
-        # self.cache_dir = tempfile.mkdtemp()
-        self.cache_dir = '/tmp/pinboard'
+        self.cache_dir = tempfile.mkdtemp()
 
     def __repr__(self):
         return '<%s username=%r>' % (type(self).__name__, self.username)
@@ -78,6 +86,7 @@ class PinboardManager:
 
         return sess
 
+    @updates_cache
     def _get_enriched_data(self):
         # Page through my Pinboard account, and attach the Pinboard IDs.
         sess = self._login_pinboard_sess()
@@ -152,6 +161,7 @@ class PinboardManager:
 
         return enriched_metadata
 
+    @updates_cache
     def download_assets(self):
         txt_dir = os.path.join(self.cache_dir, 'txt')
         os.makedirs(txt_dir, exist_ok=True)
@@ -225,7 +235,7 @@ class PinboardManager:
                 title=bookmark['title'],
                 url=bookmark['url'],
                 description=bookmark['description'],
-                is_starred=is_starred,
+                starred=is_starred,
                 archive_id=archive_id,
                 full_text=full_text,
                 toread=(bookmark['toread'] != '0'),

@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8
 
+import datetime as dt
 import os
 import subprocess
 import sys
+import time
 
 from elasticsearch import Elasticsearch
 from flask import render_template, request, url_for, Flask
@@ -46,9 +48,16 @@ def prev_page_url(request):
     return _build_pagination_url(page - 1)
 
 
+def generation_time(start_time):
+    diff = dt.datetime.now() - start_time
+    time = (diff.seconds * 1e6 + diff.microseconds) / 1e6
+    return '%.3f' % time
+
+
 app.jinja_env.filters['add_tag_to_query'] = add_tag_to_query
 app.jinja_env.filters['custom_tag_sort'] = custom_tag_sort
 app.jinja_env.filters['description_markdown'] = description_markdown
+app.jinja_env.filters['generation_time'] = generation_time
 app.jinja_env.filters['next_page_url'] = next_page_url
 app.jinja_env.filters['prev_page_url'] = prev_page_url
 app.jinja_env.filters['slang_time'] = lambda d: maya.parse(d).slang_time()
@@ -80,6 +89,14 @@ manager = PinboardManager(
 def update_index():
     manager.get_bookmark_metadata()
 
+    try:
+        mtime = os.stat(manager.cache_path('write_marker')).st_mtime
+        if time.time() - mtime > 45:
+            print('Index already up-to-date...')
+            return
+    except FileNotFoundError:
+        pass
+
     index_documents(
         client=client,
         index_name='pinboard',
@@ -90,6 +107,7 @@ def update_index():
 @app.route('/')
 # @login_required
 def index():
+    start_time = dt.datetime.now()
     query_string = request.args.get('query', '')
 
     results = search_documents(
@@ -107,7 +125,8 @@ def index():
     return render_template(
         'index.html',
         results=results,
-        query_string=query_string
+        query_string=query_string,
+        start_time=start_time
     )
 
 
@@ -155,4 +174,4 @@ if __name__ == '__main__':
 
     configure_login(app, password='password')
 
-    app.run(debug=True)
+    app.run()
