@@ -32,7 +32,8 @@ class PinboardManager:
         self.password = password
         self.last_fetched = None
 
-        self.cache_dir = tempfile.mkdtemp()
+        self.cache_dir = '/tmp/pinboard'
+        os.makedirs(self.cache_dir, exist_ok=True)
 
     def __repr__(self):
         return '<%s username=%r>' % (type(self).__name__, self.username)
@@ -134,8 +135,6 @@ class PinboardManager:
                 cache = book.find('a', attrs={'class': 'cached'})
                 if cache is not None:
                     archive_links[book.attrs['id']] = cache.attrs['href']
-
-            break
 
             # Now look for the thing with the link to the next page:
             #
