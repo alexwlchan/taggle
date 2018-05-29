@@ -62,7 +62,8 @@ def configure_login(app, password):
             "The server could not verify that you are authorized to access "
             "the URL requested. You either supplied the wrong credentials "
             "(e.g. a bad password), or your browser doesn't understand how to "
-            "supply the credentials required."
+            "supply the credentials required.  "
+            "Please <a href=/login>log in</a>."
         )
         return render_template(
             'error.html',

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8
+"""
+Usage: viewer.py --pin_username=<PIN_USERNAME> --pin_password=<PIN_PASSWORD> --app_password=<APPPASSWORD> [--debug]
+"""
 
 import datetime as dt
 import os
@@ -7,6 +10,7 @@ import subprocess
 import sys
 import time
 
+import docopt
 from elasticsearch import Elasticsearch
 from flask import render_template, request, url_for, Flask
 from flask_apscheduler import APScheduler
@@ -80,12 +84,6 @@ app.jinja_env.filters['display_query'] = lambda q: q.replace('"', '&quot;')
 client = Elasticsearch(hosts=['http://localhost:9200'])
 
 
-manager = PinboardManager(
-    username=open('username.txt').read().strip(),
-    password=open('password.txt').read().strip(),
-)
-
-
 def update_index():
     manager.get_bookmark_metadata()
 
@@ -105,7 +103,7 @@ def update_index():
 
 
 @app.route('/')
-# @login_required
+@login_required
 def index():
     start_time = dt.datetime.now()
     query_string = request.args.get('query', '')
@@ -145,24 +143,32 @@ def page_not_found(error):
 class Config(object):
     index_name = None
 
-    JOBS = [
-        {
-            'id': 'update_index',
-            'func': update_index,
-            'trigger': 'interval',
-            'seconds': 30
-        },
-        {
-            'id': 'download_assets',
-            'func': manager.download_assets,
-            'trigger': 'interval',
-            'seconds': 600
-        }
-    ]
+    def __init__(self, manager):
+        self.JOBS = [
+            {
+                'id': 'update_index',
+                'func': update_index,
+                'trigger': 'interval',
+                'seconds': 30
+            },
+            {
+                'id': 'download_assets',
+                'func': manager.download_assets,
+                'trigger': 'interval',
+                'seconds': 600
+            }
+        ]
 
 
 if __name__ == '__main__':
-    app.config.from_object(Config())
+    args = docopt.docopt(__doc__)
+
+    manager = PinboardManager(
+        username=args['--pin_username'],
+        password=args['--pin_password']
+    )
+
+    app.config.from_object(Config(manager))
     app.jinja_env.undefined = StrictUndefined
 
     scss = Scss(app)
@@ -172,6 +178,6 @@ if __name__ == '__main__':
     scheduler.init_app(app)
     scheduler.start()
 
-    configure_login(app, password='password')
+    configure_login(app, password=args['--app_password'])
 
-    app.run()
+    app.run(debug=args['--debug'])

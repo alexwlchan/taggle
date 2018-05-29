@@ -12,6 +12,7 @@ chardet==3.0.4            # via readability-lxml, requests
 click==6.7                # via flask
 cssselect==1.0.3          # via readability-lxml
 dateparser==0.7.0         # via maya
+docopt==0.6.2
 elasticsearch==6.2.0
 flask-apscheduler==1.8.0
 flask-login==0.4.1
