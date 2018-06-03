@@ -236,6 +236,7 @@ class PinboardManager:
                 description=bookmark['description'],
                 starred=is_starred,
                 archive_id=archive_id,
+                slug=bookmark['slug'],
                 full_text=full_text,
                 toread=(bookmark['toread'] != '0'),
             )
