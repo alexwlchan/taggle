@@ -45,6 +45,8 @@ app.jinja_env.filters['build_tag_cloud'] = lambda t: build_tag_cloud(
     t, options
 )
 
+app.jinja_env.filters['extension'] = lambda t: t.split('.')[-1]
+
 # The query is exposed in the <input> search box with the ``safe`` filter,
 # so HTML entities aren't escaped --- but we need to avoid closing the
 # value attribute early.
