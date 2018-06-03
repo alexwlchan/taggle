@@ -38,7 +38,7 @@ app = TaggleApp(
 app.jinja_env.filters['title_markdown'] = title_markdown
 
 options = TagcloudOptions(
-    size_start=9, size_end=24, colr_start='#999999', colr_end='#ca3b0c'
+    size_start=9, size_end=24, colr_start='#999999', colr_end='#3b0caa'
 )
 
 app.jinja_env.filters['build_tag_cloud'] = lambda t: build_tag_cloud(
