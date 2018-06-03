@@ -12,7 +12,8 @@ from taggle.elastic import add_tag_to_query
 
 
 def TaggleApp(name, instance_path):
-    app = Flask(__name__,
+    app = Flask(
+        name,
         static_folder=os.path.join(instance_path, 'static'),
         template_folder=os.path.join(instance_path, 'templates')
     )

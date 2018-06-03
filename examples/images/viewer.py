@@ -52,19 +52,20 @@ app.jinja_env.filters['display_query'] = lambda q: q.replace('"', '&quot;')
 
 
 def update_index():
-    manager.get_bookmark_metadata()
+    print('entering update_index()')
 
     try:
-        mtime = os.stat(manager.cache_path('write_marker')).st_mtime
+        mtime = os.stat(manager.cache_path('metadata.json')).st_mtime
         if time.time() - mtime > 45:
             print('Index already up-to-date...')
             return
     except FileNotFoundError:
         pass
 
+    print(list(manager.get_data_for_indexing()))
     index_documents(
         client=client,
-        index_name='pinboard',
+        index_name='images',
         documents=list(manager.get_data_for_indexing())
     )
 
@@ -77,14 +78,9 @@ def index():
 
     results = search_documents(
         client=client,
-        index_name='pinboard',
+        index_name='images',
         query_string=query_string,
-        page=int(request.args.get('page', '1')),
-        query_params={
-            '_source': {
-                'excludes': ['full_text']
-            }
-        }
+        page=int(request.args.get('page', '1'))
     )
 
     return render_template(
@@ -116,9 +112,16 @@ class Config(object):
                 'id': 'update_index',
                 'func': update_index,
                 'trigger': 'interval',
-                'seconds': 30,
-                'timezone': 'utc',
-            }
+                'seconds': 1,
+                # 'timezone': 'utc',
+            },
+            # {
+            #     'id': 'download_assets',
+            #     'func': manager.download_assets,
+            #     'trigger': 'interval',
+            #     'seconds': 5,
+            #     'timezone': 'utc',
+            # }
         ]
 
 
@@ -130,6 +133,7 @@ if __name__ == '__main__':
     manager = ImageManager()
 
     app.config.from_object(Config(manager))
+    app.config['LORIS_HOST'] = args['--loris_host']
 
     scheduler = APScheduler()
     scheduler.init_app(app)
