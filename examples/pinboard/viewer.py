@@ -182,4 +182,4 @@ if __name__ == '__main__':
 
     configure_login(app, password=args['--app_password'])
 
-    app.run(debug=args['--debug'])
+    app.run(host='0.0.0.0', debug=args['--debug'])
