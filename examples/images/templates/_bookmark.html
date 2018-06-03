@@ -1,1 +1,16 @@
-{{ b }}
+<div class="bookmark grid-item" id="{{ b.id }}">
+  <a href="http://{{ loris_host }}/{{ b.image_id }}">
+    <img src="http://{{ loris_host }}/{{ b.image_id }}">
+  </a>
+  {% if b.title %}
+  <div class="bookmark__title">{{ b.title }}</div>
+  {% endif %}
+  {% if b.url %}
+    <div class="bookmark__metadata bookmark__url"><a href="{{ b.url }}">{{ b.url|short_url }}</a></div>
+  {% endif %}
+  <div class="bookmark__metadata">
+    {% for tag in b.tags|sort %}
+      <a href="/?query={{ ""|add_tag_to_query(tag) }}" class="bookmark__tag">{{ tag|safe }}</a>
+    {% endfor %}
+  </div>
+</div>

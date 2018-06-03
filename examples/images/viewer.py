@@ -71,7 +71,7 @@ def update_index():
 
 
 @app.route('/')
-@login_required
+# @login_required
 def index():
     start_time = dt.datetime.now()
     query_string = request.args.get('query', '')
@@ -87,7 +87,8 @@ def index():
         'index.html',
         results=results,
         query_string=query_string,
-        start_time=start_time
+        start_time=start_time,
+        loris_host=app.config['LORIS_HOST']
     )
 
 

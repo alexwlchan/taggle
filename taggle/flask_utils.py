@@ -2,6 +2,7 @@
 
 import datetime as dt
 import os
+from urllib.parse import urlparse
 
 from flask import Flask
 from flask_scss import Scss
@@ -28,6 +29,7 @@ def TaggleApp(name, instance_path):
     app.jinja_env.filters['generation_time'] = generation_time
     app.jinja_env.filters['next_page_url'] = next_page_url
     app.jinja_env.filters['prev_page_url'] = prev_page_url
+    app.jinja_env.filters['short_url'] = lambda u: urlparse(u).netloc
     app.jinja_env.filters['slang_time'] = lambda d: maya.parse(d).slang_time()
 
     app.jinja_env.undefined = StrictUndefined

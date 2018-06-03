@@ -10,20 +10,42 @@
   <div class="row">
     <div class="content__bookmarks">
       {% include "_pagination.html" %}
-      {% for b in results.documents %}
-        {% include "_bookmark.html" %}
-      {% endfor %}
+
+      {% if results.total_size > 1 %}
+      <div class="tag_cloud">
+        {% include "_tag_cloud.html" %}
+      </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="grid">
+          <div class="grid-sizer"></div>
+          <div class="gutter-sizer"></div>
+          {% for b in results.documents %}
+            {% include "_bookmark.html" %}
+          {% endfor %}
+        </div>
+      </div>
       {% endif %}
       {% if results.total_size > 4 %}
       {% include "_pagination.html" %}
       {% endif %}
     </div>
-    {% if results.total_size > 1 %}
-    <div class="tag_cloud">
-      {% include "_tag_cloud.html" %}
-    </div>
-    {% endif %}
   </div>
 </div>
+
+<script>
+  var $grid = $('.grid').masonry({
+    itemSelector: '.grid-item',
+    // gutter: 16,
+    columnWidth: '.grid-sizer',
+    gutter: '.gutter-sizer',
+    percentPosition: true
+  });
+  // layout Masonry after each image loads
+  $grid.imagesLoaded().progress( function() {
+    $grid.masonry('layout');
+  });
+</script>
 
 {% endblock %}
