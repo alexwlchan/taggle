@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8
 """
-Usage: viewer.py --pin_username=<PIN_USERNAME> --pin_password=<PIN_PASSWORD> --app_password=<APPPASSWORD> [--debug]
+Usage: viewer.py --pin_username=<PIN_USERNAME> --pin_password=<PIN_PASSWORD> --app_password=<APPPASSWORD> --es_host=<HOST> [--debug]
 """
 
 import datetime as dt
@@ -79,9 +79,6 @@ app.jinja_env.filters['build_tag_cloud'] = lambda t: build_tag_cloud(
 # so HTML entities aren't escaped --- but we need to avoid closing the
 # value attribute early.
 app.jinja_env.filters['display_query'] = lambda q: q.replace('"', '&quot;')
-
-
-client = Elasticsearch(hosts=['http://localhost:9200'])
 
 
 def update_index():
@@ -164,6 +161,8 @@ class Config(object):
 
 if __name__ == '__main__':
     args = docopt.docopt(__doc__)
+
+    client = Elasticsearch(hosts=[f'http://{args["--es_host"]}'])
 
     manager = PinboardManager(
         username=args['--pin_username'],
