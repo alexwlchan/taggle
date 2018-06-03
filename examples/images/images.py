@@ -25,31 +25,16 @@ def updates_cache(fn):
     return wrapper
 
 
-class PinboardManager:
+class ImageManager:
 
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-        self.last_fetched = None
+    def __init__(self):
+        self.last_indexed = None
 
-        self.cache_dir = '/tmp/pinboard'
+        self.cache_dir = '/tmp/images'
         os.makedirs(self.cache_dir, exist_ok=True)
 
     def __repr__(self):
-        return '<%s username=%r>' % (type(self).__name__, self.username)
-
-    def _api_get(self, path, params=None):
-        if params is None:
-            params = {}
-        params['format'] = 'json'
-
-        resp = requests.get(
-            f'https://api.pinboard.in/v1{path}',
-            auth=(self.username, self.password),
-            params=params
-        )
-        resp.raise_for_status()
-        return resp.json()
+        return '<%s>' % (type(self).__name__)
 
     def cache_path(self, path):
         return os.path.join(self.cache_dir, path)

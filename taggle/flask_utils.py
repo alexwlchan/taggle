@@ -1,6 +1,38 @@
 # -*- encoding: utf-8
 
 import datetime as dt
+import os
+
+from flask import Flask
+from flask_scss import Scss
+from jinja2 import StrictUndefined
+import maya
+
+from taggle.elastic import add_tag_to_query
+
+
+def TaggleApp(name, instance_path):
+    app = Flask(__name__,
+        static_folder=os.path.join(instance_path, 'static'),
+        template_folder=os.path.join(instance_path, 'templates')
+    )
+
+    scss = Scss(app,
+        asset_dir=os.path.join(instance_path, 'assets'),
+        static_dir=os.path.join(instance_path, 'static')
+    )
+    scss.update_scss()
+
+    app.jinja_env.filters['add_tag_to_query'] = add_tag_to_query
+    app.jinja_env.filters['generation_time'] = generation_time
+    app.jinja_env.filters['next_page_url'] = next_page_url
+    app.jinja_env.filters['prev_page_url'] = prev_page_url
+    app.jinja_env.filters['slang_time'] = lambda d: maya.parse(d).slang_time()
+
+    app.jinja_env.undefined = StrictUndefined
+
+    return app
+
 
 
 def _build_pagination_url(desired_page):

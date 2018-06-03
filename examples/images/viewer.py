@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8
 """
-Usage: viewer.py --metadata=<METADATA> --app_password=<APPPASSWORD> --es_host=<HOST> --loris_host=<LORIS_HOST> [--debug]
+Usage: viewer.py --app_password=<APPPASSWORD> --es_host=<HOST> --loris_host=<LORIS_HOST> [--debug]
 """
 
 import datetime as dt
@@ -15,33 +15,26 @@ from elasticsearch import Elasticsearch
 from flask import render_template, request, url_for, Flask
 from flask_apscheduler import APScheduler
 from flask_login import login_required
-from flask_scss import Scss
 from jinja2 import StrictUndefined
 import maya
 
-sys.path.append(subprocess.check_output(
-    ['git', 'rev-parse', '--show-toplevel']).strip().decode('utf8'))
+ROOT = subprocess.check_output(
+    ['git', 'rev-parse', '--show-toplevel']).strip().decode('utf8')
+sys.path.append(ROOT)
 
-from taggle.elastic import add_tag_to_query, index_documents, search_documents
-from taggle.flask_utils import generation_time, next_page_url, prev_page_url
+from taggle.elastic import index_documents, search_documents
+from taggle.flask_utils import TaggleApp
 from taggle.login import configure_login
 from taggle.tagcloud import build_tag_cloud, TagcloudOptions
 
-from filters import description_markdown, title_markdown
-from pinboard import PinboardManager
-from tagsort import custom_tag_sort
+from filters import title_markdown
+from images import ImageManager
 
 
-app = Flask(__name__)
-
-
-app.jinja_env.filters['add_tag_to_query'] = add_tag_to_query
-app.jinja_env.filters['custom_tag_sort'] = custom_tag_sort
-app.jinja_env.filters['description_markdown'] = description_markdown
-app.jinja_env.filters['generation_time'] = generation_time
-app.jinja_env.filters['next_page_url'] = next_page_url
-app.jinja_env.filters['prev_page_url'] = prev_page_url
-app.jinja_env.filters['slang_time'] = lambda d: maya.parse(d).slang_time()
+app = TaggleApp(
+    __name__,
+    instance_path=os.path.join(ROOT, 'examples/images')
+)
 app.jinja_env.filters['title_markdown'] = title_markdown
 
 options = TagcloudOptions(
@@ -125,13 +118,6 @@ class Config(object):
                 'trigger': 'interval',
                 'seconds': 30,
                 'timezone': 'utc',
-            },
-            {
-                'id': 'download_assets',
-                'func': manager.download_assets,
-                'trigger': 'interval',
-                'seconds': 600,
-                'timezone': 'utc',
             }
         ]
 
@@ -141,16 +127,9 @@ if __name__ == '__main__':
 
     client = Elasticsearch(hosts=[f'http://{args["--es_host"]}'])
 
-    manager = PinboardManager(
-        username=args['--pin_username'],
-        password=args['--pin_password']
-    )
+    manager = ImageManager()
 
     app.config.from_object(Config(manager))
-    app.jinja_env.undefined = StrictUndefined
-
-    scss = Scss(app)
-    scss.update_scss()
 
     scheduler = APScheduler()
     scheduler.init_app(app)
