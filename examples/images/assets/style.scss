@@ -1,0 +1,35 @@
+$primary-color: #1727b5;
+$primary-dark: darken($primary-color, 15%);
+$accent-grey: #999;
+
+$tag-color: #ca3b0c;
+
+$max-width: 1200px;
+$default-padding: 30px;
+
+body {
+  font: 11pt 'Avenir Next', Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.3em;
+}
+
+h3 {
+  margin-bottom: 0.1em;
+}
+
+@import "_mixins.scss";
+
+@import "_aside.scss";
+@import "_bookmark.scss";
+@import "_footer.scss";
+@import "_pagination.scss";
+@import "_tag_cloud.scss";
+
+a:hover {
+  text-decoration: none;
+}
+
+.content {
+  @include central_element();
+}

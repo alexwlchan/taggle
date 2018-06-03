@@ -1,0 +1,18 @@
+$search__border-radius: 6px;
+$search__padding: 3px;
+$search__height: 20px;
+$search__button_width: 40px;
+
+#form__query {
+  background: white;
+  border: 2px solid darken($primary-color, 15%);
+  border-radius: $search__border-radius;
+  padding: $search__padding;
+  height: $search__height + $search__padding * 2;
+  margin-bottom: 10px;
+  margin-left: -$search__padding;
+  margin-right: -$search__padding;
+  width: calc(100% + 4px);
+  margin-bottom:8px;
+  font-size: 1em;
+}
