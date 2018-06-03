@@ -149,13 +149,15 @@ class Config(object):
                 'id': 'update_index',
                 'func': update_index,
                 'trigger': 'interval',
-                'seconds': 30
+                'seconds': 30,
+                'timezone': 'utc',
             },
             {
                 'id': 'download_assets',
                 'func': manager.download_assets,
                 'trigger': 'interval',
-                'seconds': 600
+                'seconds': 600,
+                'timezone': 'utc',
             }
         ]
 
