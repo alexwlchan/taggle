@@ -4,7 +4,7 @@ import datetime as dt
 import os
 from urllib.parse import urlparse
 
-from flask import Flask
+from flask import Flask, url_for
 from flask_scss import Scss
 from jinja2 import StrictUndefined
 import maya
@@ -38,7 +38,7 @@ def TaggleApp(name, instance_path):
 
 
 
-def _build_pagination_url(desired_page):
+def _build_pagination_url(request, desired_page):
     if desired_page < 1:
         return None
     args = request.args.copy()
@@ -48,12 +48,12 @@ def _build_pagination_url(desired_page):
 
 def next_page_url(request):
     page = int(request.args.get('page', '1'))
-    return _build_pagination_url(page + 1)
+    return _build_pagination_url(request, desired_page=page + 1)
 
 
 def prev_page_url(request):
     page = int(request.args.get('page', '1'))
-    return _build_pagination_url(page - 1)
+    return _build_pagination_url(request, desired_page=page - 1)
 
 
 def generation_time(start_time):
