@@ -1,12 +1,12 @@
 <div class="bookmark grid-item" id="{{ b.id }}">
   <a href="http://{{ loris_host }}/{{ b.image_id }}/full/full/0/default.{{ b.image_id|extension }}">
     <img
-        src="http://{{ loris_host }}/{{ b.image_id }}/full/300,/0/default.{{ b.image_id|extension }}"/>
+        src="http://{{ loris_host }}/{{ b.image_id }}/full/270,/0/default.{{ b.image_id|extension }}"/>
   </a>
-  {% if b.title %}
+  {% if b.title is defined %}
   <div class="bookmark__title">{{ b.title }}</div>
   {% endif %}
-  {% if b.url %}
+  {% if b.url is defined %}
     <div class="bookmark__metadata bookmark__url"><a href="{{ b.url }}">{{ b.url|short_url }}</a></div>
   {% endif %}
   <div class="bookmark__metadata">

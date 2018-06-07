@@ -40,8 +40,22 @@
     // gutter: 16,
     columnWidth: '.grid-sizer',
     gutter: '.gutter-sizer',
-    percentPosition: true
+    percentPosition: true,
+    fitWidth: true
   });
+
+
+
+  $grid.on('layoutComplete', function() {
+    var gridWidth = $('.grid')[0].style.width;
+    $('#aside__inner')[0].style.width = gridWidth;
+    $('.pagination')[0].style.width = gridWidth;
+    $('.pagination')[1].style.width = gridWidth;
+    $('.tag_cloud')[0].style.width = gridWidth;
+    $('footer .content')[0].style.width = gridWidth;
+    // console.log(completedGrid);
+  });
+
   // layout Masonry after each image loads
   $grid.imagesLoaded().progress( function() {
     $grid.masonry('layout');

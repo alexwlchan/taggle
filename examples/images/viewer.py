@@ -45,7 +45,7 @@ app.jinja_env.filters['build_tag_cloud'] = lambda t: build_tag_cloud(
     t, options
 )
 
-app.jinja_env.filters['extension'] = lambda t: t.split('.')[-1]
+app.jinja_env.filters['extension'] = lambda t: t.split('.')[-1].lower()
 
 # The query is exposed in the <input> search box with the ``safe`` filter,
 # so HTML entities aren't escaped --- but we need to avoid closing the
@@ -59,7 +59,7 @@ def update_index():
     try:
         mtime = os.stat(manager.cache_path('metadata.json')).st_mtime
         if time.time() - mtime > 45:
-            print('Index already up-to-date...')
+            print(f'Index already up-to-date at {time.time()}...')
             return
     except FileNotFoundError:
         pass
@@ -115,7 +115,7 @@ class Config(object):
                 'id': 'update_index',
                 'func': update_index,
                 'trigger': 'interval',
-                'seconds': 30,
+                'seconds': 10,
                 # 'timezone': 'utc',
             },
         ]
