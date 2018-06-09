@@ -34,6 +34,8 @@ if __name__ == '__main__':
     }
 
     name = os.path.basename(urlparse(args['--img_url']).path)
+    if name.endswith(':large'):
+        name = name.replace(':large', '')
 
     if name.startswith('tumblr_'):
         shard = name.replace('tumblr_', '')[:2]
