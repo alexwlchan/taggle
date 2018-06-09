@@ -6,6 +6,7 @@ Usage: add_bookmark.py --img_url=<URL> [--url=<URL>] [--title=<TITLE>] --tags=<T
 
 import json
 import os
+import re
 import subprocess
 import sys
 from urllib.parse import urlparse
@@ -25,7 +26,7 @@ from taggle.models import TaggedDocument
 if __name__ == '__main__':
     args = docopt.docopt(__doc__)
 
-    tags = args['--tags'].split(' ,')
+    tags = re.split('[ ,]', args['--tags'])
 
     data = {
         'id': str(uuid.uuid4()),
