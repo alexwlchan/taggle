@@ -32,10 +32,8 @@ class ImageManager:
 
     def get_data_for_indexing(self):
         for doc in self.get_image_metadata():
-            print(doc['date_added'])
             print(maya.parse(
                 doc['date_added']).datetime().strftime(DATE_FORMAT))
             doc['date_added'] = maya.parse(
                 doc['date_added']).datetime().strftime(DATE_FORMAT)
-            print(doc['date_added'])
             yield TaggedDocument(**doc)

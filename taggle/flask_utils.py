@@ -32,7 +32,7 @@ def TaggleApp(name, instance_path):
     app.jinja_env.filters['short_url'] = lambda u: urlparse(u).netloc
     app.jinja_env.filters['slang_time'] = lambda d: maya.parse(d).slang_time()
 
-    app.jinja_env.undefined = StrictUndefined
+  #  app.jinja_env.undefined = StrictUndefined
 
     return app
 

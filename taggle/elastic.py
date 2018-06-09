@@ -224,7 +224,7 @@ def _build_query(query_string, page, page_size):
         'tags': {
             'terms': {
                 'field': 'tags.raw',
-                'size': 120
+                'size': 200
             }
         }
     }

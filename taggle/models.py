@@ -16,7 +16,7 @@ class TaggedDocument:
         self.id = id
         self.tags = tags
         self.date_added = date_added or dt.datetime.now()
-        self.metadata = metadata
+        self.metadata = metadata.get('metadata') or metadata
         super().__init__()
 
     def __getattr__(self, name):

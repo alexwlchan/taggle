@@ -73,7 +73,7 @@ def update_index():
 
 
 @app.route('/')
-# @login_required
+@login_required
 def index():
     start_time = dt.datetime.now()
     query_string = request.args.get('query', '')
@@ -116,7 +116,7 @@ class Config(object):
                 'func': update_index,
                 'trigger': 'interval',
                 'seconds': 10,
-                # 'timezone': 'utc',
+                'timezone': 'utc',
             },
         ]
 
