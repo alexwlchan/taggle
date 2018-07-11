@@ -9,6 +9,7 @@ import os
 import subprocess
 import sys
 import time
+from urllib.parse import quote_plus as urlencode
 
 import docopt
 from elasticsearch import Elasticsearch
@@ -45,12 +46,14 @@ app.jinja_env.filters['build_tag_cloud'] = lambda t: build_tag_cloud(
     t, options
 )
 
-app.jinja_env.filters['extension'] = lambda t: t.split('.')[-1].lower()
+app.jinja_env.filters['extension'] = lambda t: t.split('.')[-1].lower().replace('jpeg', 'jpg')
 
 # The query is exposed in the <input> search box with the ``safe`` filter,
 # so HTML entities aren't escaped --- but we need to avoid closing the
 # value attribute early.
 app.jinja_env.filters['display_query'] = lambda q: q.replace('"', '&quot;')
+
+app.jinja_env.filters['urlencode'] = urlencode
 
 
 def update_index():
