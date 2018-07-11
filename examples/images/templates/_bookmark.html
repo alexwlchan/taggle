@@ -1,6 +1,7 @@
 <div class="bookmark grid-item" id="{{ b.id }}">
   <a href="http://{{ loris_host }}/{{ b.image_id|urlencode }}/full/full/0/default.{{ b.image_id|extension }}">
     <img
+        style="width: 250px; height: {{ (250 / b.size.width) * b.size.height }}px;"
         src="http://{{ loris_host }}/{{ b.image_id|urlencode }}/full/250,/0/default.{{ b.image_id|extension }}"/>
   </a>
   {% if b.title is defined %}
