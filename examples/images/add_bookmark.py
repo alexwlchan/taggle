@@ -15,6 +15,7 @@ import uuid
 
 import attr
 import docopt
+from PIL import Image
 
 ROOT = subprocess.check_output(
     ['git', 'rev-parse', '--show-toplevel']).strip().decode('utf8')
@@ -51,6 +52,12 @@ if __name__ == '__main__':
 
     data['file'] = name
     data['image_id'] = os.path.join(shard, name)
+
+    im = Image.open(outpath)
+    data['size'] = {
+        'width': im.width,
+        'height': im.height,
+    }
 
     if args['--url']:
         data['url'] = args['--url']
